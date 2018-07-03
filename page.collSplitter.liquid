@@ -51,7 +51,7 @@
       chkB.addEventListener('change', this.chkB_change);
       delB.innerText = 'delete';
       delB.addEventListener('click', this.delB_click);
-      for(let i of ['title', 'handle', 'id']) {el.appendChild(document.createElement('span')).innerHTML = '<b>' + i + ': </b>' +coll[i];}
+      for(let i of ['title', 'handle', 'id']) {el.appendChild(document.createElement('span')).innerHTML = '<b>' + i + ': </b><a href="' + this.adminURL + 'collections/' + coll.id + '" target="_blank">' +coll[i] + '</a>';}
       return el;
     },
     
@@ -78,11 +78,12 @@
       method: 'DELETE',
       credentials: 'omit',
       headers: this.headers
-    });},
+    }).then(() => collSplitter.getCollections());},
     
     delB_click(ev) {
-      ev.preventDefault();
-      collSplitter.deleteColl(ev.target.c_id);
+      let tar = ev.target;
+      tar.innerText = 'deleting...'
+      collSplitter.deleteColl(tar.c_id);
       return false;
     },
     
