@@ -16,7 +16,7 @@ Shopify collSplitter setup instructions
   - Go to Shopify > Admin > Online Store > Themes
     1. Select the "Actions" drop-down on the current theme and pick "Edit code"
     2. Click on "Add a new template file" to create a new template for "page" called [anything]
-    3. Copy the included file into the new template, configure the variables at the top of the script section (that API key and shop address), and save it
+    3. Copy the included file into the new template, configure the variables at the top of the script section (that API key), and save it
 
 4. Page
   - Go to Shopify > Admin > Online Store > Pages > Add page
