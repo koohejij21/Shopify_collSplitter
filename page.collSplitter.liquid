@@ -80,7 +80,7 @@
       headers: this.headers
     }).then(() => collSplitter.getCollections());},
     
-    delB_click(ev) {  
+    delB_click(ev) {
       let tar = ev.target;
       if(!confirm('Are you sure you want to delete that collection?')) {return false;}
       tar.innerText = 'deleting...'
