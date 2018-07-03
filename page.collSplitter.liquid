@@ -80,11 +80,12 @@
       headers: this.headers
     }).then(() => collSplitter.getCollections());},
     
-    delB_click(ev) {
+    delB_click(ev) {  
       let tar = ev.target;
+      if(!confirm('Are you sure you want to delete that collection?')) {return false;}
       tar.innerText = 'deleting...'
       collSplitter.deleteColl(tar.c_id);
-      return false;
+      return true;
     },
     
     chkB_change(ev) {collSplitter.updPending(ev.target);},
