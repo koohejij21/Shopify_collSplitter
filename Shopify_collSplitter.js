@@ -34,15 +34,15 @@
     
     mkCollectionEl(coll) {
       let el = document.createElement('div'),
-      chkB = el.appendChild(document.createElement('input'))/*,
-      delB = el.appendChild(document.createElement('button'))*/;
+      chkB = el.appendChild(document.createElement('input')),
+      delB = el.appendChild(document.createElement('button'));
       el.className = 'shopifyCollection';
-      chkB.c_id = /*delB.c_id =*/ coll.id;
+      chkB.c_id = delB.c_id = coll.id;
       chkB.c_title = coll.title;
       chkB.type = 'checkbox';
       chkB.addEventListener('change', this.chkB_change);
-      /*delB.innerText = 'delete';
-      delB.addEventListener('click', this.delB_click);*/
+      delB.innerText = 'delete';
+      delB.addEventListener('click', this.delB_click);
       for(let i of ['title', 'handle', 'id']) {el.appendChild(document.createElement('span')).innerHTML = '<b>' + i + ': </b>' +coll[i];}
       return el;
     },
@@ -66,7 +66,7 @@
       }
     });},
     
-    /*deleteColl(id) {return fetch(this.adminURL + 'custom_collections/#' + id + '.json', {
+    deleteColl(id) {return fetch(this.adminURL + 'custom_collections/#' + id + '.json', {
       method: 'DELETE',
       credentials: 'omit',
       headers: this.headers
@@ -76,7 +76,7 @@
       ev.preventDefault();
       collSplitter.deleteColl(ev.target.c_id);
       return false;
-    },*/
+    },
     
     chkB_change(ev) {collSplitter.updPending(ev.target);},
     
