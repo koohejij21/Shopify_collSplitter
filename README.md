@@ -22,5 +22,6 @@ Shopify collSplitter setup instructions
   - Go to Shopify > Admin > Online Store > Pages > Add page
     1. Name it something easy to type
     2. Select the new template you just created in the "Template" drop-down on the right and save
+    3. Set the visibility to public and leave it unlisted, as this uses the Shopify Admin API, which won't work from the page preview.
 
-5. Navigate to the page after logging into the new customer account, regardless of whether it's hidden or public. It will not load anything otherwise.
+5. Navigate to the page after logging into the new customer account. It will not load anything otherwise.

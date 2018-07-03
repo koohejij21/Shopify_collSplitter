@@ -2,7 +2,7 @@
 {% if customer and customer.tags contains 'admin' %}
 
 <div id="collSplitter_view">Loading...</div>
-<button id="collSplitter_submit">Split selected</button><button id="collSplitter_delete">Delete selected</button><span> max collection size: </span><input id="collSplitter_max" type="number" value="5">
+<button id="collSplitter_submit">Split selected</button><span> max collection size: </span><input id="collSplitter_max" type="number" value="5">
 
 <script>
 
@@ -21,7 +21,6 @@
     
     view: document.getElementById('collSplitter_view'),
     submitB: document.getElementById('collSplitter_submit'),
-    delB: document.getElementById('collSplitter_delete'),
     maxSize: document.getElementById('collSplitter_max'),
     pending: {},
   
@@ -38,21 +37,21 @@
         that.collections = res.collections;
         that.view.innerHTML = '';
         for(let i of that.collections) {that.view.appendChild(that.mkCollectionEl(i));}
-        return that.collections;
       });
     },
     
     mkCollectionEl(coll) {
       let el = document.createElement('div'),
-      chkB = el.appendChild(document.createElement('input'));
+      chkB = el.appendChild(document.createElement('input')),
+      delB = el.appendChild(document.createElement('button'));
       el.className = 'shopifyCollection';
+      chkB.c_id = delB.c_id = coll.id;
+      chkB.c_title = coll.title;
       chkB.type = 'checkbox';
-      chkB.coll = {
-        id: coll.id,
-        title: coll.title,
-        type: coll.collection_type
-      };
+      delB.innerText = 'delete';
+      delB.c_type = coll.collection_type;
       chkB.addEventListener('change', this.chkB_change);
+      delB.addEventListener('click', this.delB_click);
       for(let i of ['title', 'handle', 'id']) {el.appendChild(document.createElement('span')).innerHTML = '<b>' + i + ': </b><a href="' + this.adminURL + 'collections/' + coll.id + '" target="_blank">' +coll[i] + '</a>';}
       return el;
     },
@@ -71,52 +70,56 @@
     
     mkCollectionFrom(collId, items, count) {dbgLog(items); return this.fetchJSON('custom_collections.json', {
       custom_collection: {
-        title: this.pending['c_' + collId].title + '-' + count,
+        title: this.pending['c_' + collId] + '-' + count,
         collects: items
       }
     });},
     
-    deleteColl(id) {return fetch(this.adminURL + this.pending['c_' + id].type + '_collections/' + id + '.json', {
+    deleteColl(id, type) {return fetch(this.adminURL + type + '_collections/' + id + '.json', {
       method: 'DELETE',
       credentials: 'omit',
       headers: this.headers
     }).then(() => collSplitter.getCollections());},
     
-    updPending(chkB) {
-      dbgLog('chkB_change');
-      if(chkB.checked) {
-        this.pending['c_' + chkB.coll.id] = chkB.coll;
-        chkB.parentNode.style.borderColor = '#f00';
-      } else {
-        delete this.pending['c_' + chkB.coll.id];
-        chkB.parentNode.style.borderColor = '#222';
-      }
-      //this.submitB.setAttribute('title', 'Split ' + Object.keys(this.pending).length + ' selected collections');
+    delB_click(ev) {
+      let tar = ev.target;
+      if(!confirm('Are you sure you want to delete that collection?')) {return false;}
+      tar.innerText = 'deleting...';
+      collSplitter.deleteColl(tar.c_id, tar.c_type);
+      return true;
     },
     
     chkB_change(ev) {collSplitter.updPending(ev.target);},
     
-    bClick(ev) {
-      dbgLog('bClick');
-      let tar = ev.target, act = tar.bType, splits = [];
-      if(!confirm('Are you sure you want to ' + act + ' the selected collections?')) {return false;}
+    updPending(chkB) {
+      dbgLog('chkB_change');
+      if(chkB.checked) {
+        this.pending['c_' + chkB.c_id] = chkB.c_title;
+        chkB.parentNode.style.borderColor = '#f00';
+      } else {
+        delete this.pending['c_' + chkB.c_id];
+        chkB.parentNode.style.borderColor = '#222';
+      }
+      this.submitB.setAttribute('title', 'Split ' + Object.keys(this.pending).length + ' selected collections');
+    },
+    
+    submitB_click(ev) {
+      dbgLog('submitB_click');
+      let tar = ev.target, splits = [];
       tar.disabled = true;
-      tar.innerText = 'Processing...';
-      for(let i in collSplitter.pending) {splits.push(collSplitter[act + 'Coll'](i.slice(2)));}
+      tar.innerText = 'Splitting...';
+      for(let i in collSplitter.pending) {splits.push(collSplitter.splitColl(i.slice(2)));}
       Promise.all(splits).then(function(ret) {
-        dbgLog(act + ' done: ' + ret);
+        dbgLog('done splitting: ' + ret);
         collSplitter.pending = {};
         collSplitter.getCollections();
-        tar.innerText = act.charAt(0).toUpperCase() + act.slice(1) + ' selected';
+        tar.innerText = 'Split selected';
         tar.disabled = false;
       });
     },
   
     init() {
-      this.submitB.addEventListener('click', this.bClick);
-      this.delB.addEventListener('click', this.bClick);
-      this.submitB.bType = 'split';
-      this.delB.bType = 'delete';
+      this.submitB.addEventListener('click', this.submitB_click);
       this.headers = {
         'Authorization': 'Basic ' + btoa(this.APIuser + ':' + this.APIpw),
         'Content-Type': 'application/json'
