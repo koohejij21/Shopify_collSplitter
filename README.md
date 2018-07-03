@@ -1,7 +1,4 @@
-# Shopify_collSplitter
-A shopify theme template for splitting collections into smaller ones.
-
-Setup instructions:
+Shopify collSplitter setup instructions
 
 1. API key
   - Go to Shopify > Admin > Apps > Manage private apps > Create a new private app:

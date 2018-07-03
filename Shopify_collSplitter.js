@@ -16,7 +16,7 @@
     maxSize: document.getElementById('collSplitter_max'),
     pending: {},
   
-    fetchJSON(url, post) {dbgLog('fetchJSON(' + url + ')' + (post ? (' post: ' + JSON.stringify(post)) : '')); return fetch(this.adminURL + url, {
+    fetchJSON(url, post) {if(this.debug) {dbgLog('fetchJSON(' + url + ')' + (post ? (' post: ' + JSON.stringify(post)) : ''))}; return fetch(this.adminURL + url, {
       method: post ? 'POST' : 'GET',
       body: post ? JSON.stringify(post) : undefined,
       credentials: 'omit',
